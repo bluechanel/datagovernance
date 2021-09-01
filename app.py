@@ -121,5 +121,4 @@ def mkdir(dirs: str):
 if __name__ == '__main__':
     logging.warning("请不要在使用该工具时关闭当前命令行窗口！")
     logging.warning("使用浏览器访问http://127.0.0.1:5000")
-    # mkdir('static/data/')
     app.run()
