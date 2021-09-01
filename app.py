@@ -33,12 +33,13 @@ def clean(path: str) -> list[str]:
     data = pd.read_excel(path)
     # 重复  根据id去重
     data_duplicates = data.drop_duplicates(subset=["卡号"], keep=False)
-    result1_data = pd.merge(data, data_duplicates, how='outer', on="id", indicator=True).query(
+    result1_data = pd.merge(data, data_duplicates, how='outer', on="卡号", indicator=True).query(
         '_merge == "left_only"').drop(
         columns=['_merge'])
     # 有空值  所有字段空值判断
     n = data.isnull().any(axis=1)
-    m = n[n is True].index
+    # == 是因为这里是numpy
+    m = n[n == True].index
     result2_data = data[data.index.isin(m)]
     result1_data.to_excel(f'data/{result1_name}')
     result2_data.to_excel(f'data/{result2_name}')
@@ -92,15 +93,13 @@ def ledger(path1: str, path2: str) -> list[str]:
 @app.post('/data_clean')
 def clean_route():
     r = request.get_json()
-    logging.info(str(r))
     result_name = clean(r["path"])
-    return jsonify({"filename": f"{result_name}"})
+    return jsonify({"filename": result_name})
 
 
 @app.post('/finance')
 def finance_route():
     r = request.get_json()
-    logging.info(str(r))
     result_name = finance(r["path1"], r["path2"])
     return jsonify({"filename": result_name})
 
@@ -108,7 +107,6 @@ def finance_route():
 @app.post('/ledger')
 def ledger_route():
     r = request.get_json()
-    logging.info(str(r))
     result_name = ledger(r["path1"], r["path2"])
     return jsonify({"filename": result_name})
 
