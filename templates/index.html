@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}" type="text/css">
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+
+</head>
+<body>
+<div class="container">
+    <!-- Static navbar -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#home" data-toggle="tab">数据治理</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="#clean" data-toggle="tab">数据清理</a></li>
+                    <li><a href="#finance" data-toggle="tab">信息&账单</a></li>
+                    <li><a href="#ledger" data-toggle="tab">账单&台账</a></li>
+
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+    </nav>
+
+
+    <div id="myTabContent" class="tab-content">
+        <!-- 首页 -->
+        <div class="tab-pane fade in active" id='home'>
+            <div class="jumbotron">
+                <div class="container">
+                    <h1>模板下载</h1>
+                    <p>后续功能使用的表格，严格按照此处下载的数据模板进行修改！</p>
+                </div>
+            </div>
+            <div class="container">
+                <div class="col-sm-12">
+                    <form class="form-inline" role="form">
+                        <div class="col-lg-4 form-group">
+                            <label class="control-label" for="job_name">卡台账模板</label>
+                            <a class="btn btn-info" href="/download/卡台账模板.xlsx">点击下载</a>
+                        </div>
+                        <div class="col-lg-4 form-group">
+                            <label class="control-label" for="job_name">终端设备模板</label>
+                            <a class="btn btn-info" href="/download/终端设备模板.xlsx">点击下载</a>
+                        </div>
+                        <div class="col-lg-4 form-group">
+                            <label class="control-label" for="job_name">账单模板</label>
+                            <a class="btn btn-info" href="/download/账单模板.xlsx">点击下载</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数据清洗 -->
+        <div class="tab-pane fade" id='clean'>
+            <div class="jumbotron">
+                <div class="container">
+                    <h1>数据清洗</h1>
+                    <p>数据清洗，</p>
+                </div>
+            </div>
+            <div class="container">
+                <div class="col-sm-10">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="请输入文件路径" id="clean_path">
+                        <span class="input-group-btn">
+                    <button class="btn btn-success" type="button" id="clean_submit">提交</button>
+                    </span>
+                    </div>
+                    <div id="clean_result">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 信息&账单 -->
+        <div class="tab-pane fade" id='finance'>
+            <div class="jumbotron">
+                <div class="container">
+                    <h1>信息&账单</h1>
+                    <p>提交两个excel文件地址，后台程序使用电话号码匹配，输出"信息账单的交集"表和"账单和信息的差集"表</p>
+                </div>
+            </div>
+            <div class="container">
+                <div class="col-sm-10">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label for="infoTable"></label>
+                            {#                            <input type="text" class="form-control" id="infoTable" placeholder="请输入信息表excel文件路径">#}
+                            <input type="text" class="form-control" id="infoTable"
+                                   value="/Users/jonzhang/program/datagovernance/static/data/终端设备信息模板.xlsx">
+                        </div>
+                        <div class="form-group">
+                            <label for="billTable"></label>
+                            {#                            <input type="text" class="form-control" id="billTable" placeholder="请输入账单表excel文件路径">#}
+                            <input type="text" class="form-control" id="billTable"
+                                   value="/Users/jonzhang/program/datagovernance/static/data/账单模板.xlsx">
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-success" type="button" id="financeSubmit">提交</button>
+                        </div>
+                        <div class="form-group" id="finance_result">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 账单&台账 -->
+        <div class="tab-pane fade" id="ledger">
+            <div class="jumbotron">
+                <div class="container">
+                    <h1>账单&台账</h1>
+                    <p>提交两个excel文件地址，后台程序使用ip地址匹配，输出"账单和台账的差集"表和"台账和账单的差集"表</p>
+                </div>
+            </div>
+            <div class="container">
+                <div class="col-sm-10">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label for="infoTable"></label>
+                            {#                            <input type="text" class="form-control" id="ledgerInfoTable" placeholder="请输入信息表excel文件路径">#}
+                            <input type="text" class="form-control" id="ledgerInfoTable"
+                                   value="/Users/jonzhang/program/datagovernance/static/data/终端设备信息模板.xlsx">
+                        </div>
+                        <div class="form-group">
+                            <label for="billTable"></label>
+                            {#                            <input type="text" class="form-control" id="ledgerTable" placeholder="请输入台账表excel文件路径">#}
+                            <input type="text" class="form-control" id="ledgerTable"
+                                   value="/Users/jonzhang/program/datagovernance/static/data/卡台账模板.xlsx">
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-success" type="button" id="ledgerSubmit">提交</button>
+                        </div>
+                        <div class="form-group" id="ledger_result">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- /container -->
+</div>
+<script>
+
+    $('#clean_submit').click(function () {
+        $.ajax({
+            url: "/data_clean",
+            type: "POST",
+            data: JSON.stringify({"path": $('#clean_path').val()}),
+            dataType: "json",
+            contentType: "application/json; charset=UTF-8",
+            success: function (arg) {
+                for (let i = 0; i < arg["filename"].length; i++) {
+                    $('#clean_result').append("<p><a href='/download/" + arg['filename'][i] + "'>" + arg['filename'][i] + "</a></p>")
+                }
+            },
+            error: function () {
+                alert("网络错误！")
+            }
+        })
+    });
+
+    $('#financeSubmit').click(function () {
+        $.ajax({
+            url: "/finance",
+            type: "POST",
+            data: JSON.stringify({"path1": $('#infoTable').val(), "path2": $('#billTable').val()}),
+            dataType: "json",
+            contentType: "application/json; charset=UTF-8",
+            success: function (arg) {
+                for (let i = 0; i < arg["filename"].length; i++) {
+                    $('#finance_result').append("<p><a href='/download/" + arg['filename'][i] + "'>" + arg['filename'][i] + "</a></p>")
+                }
+            },
+            error: function () {
+                alert("网络错误！")
+            }
+        })
+    })
+    $('#ledgerSubmit').click(function () {
+        $.ajax({
+            url: "/ledger",
+            type: "POST",
+            data: JSON.stringify({"path1": $('#ledgerInfoTable').val(), "path2": $('#ledgerTable').val()}),
+            dataType: "json",
+            contentType: "application/json; charset=UTF-8",
+            success: function (arg) {
+                for (let i = 0; i < arg["filename"].length; i++) {
+                    $('#ledger_result').append("<p><a href='/download/" + arg['filename'][i] + "'>" + arg['filename'][i] + "</a></p>")
+                }
+            },
+            error: function () {
+                alert("网络错误！")
+            }
+        })
+    })
+
+</script>
+</body>
+</html>
