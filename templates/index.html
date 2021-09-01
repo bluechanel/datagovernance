@@ -47,7 +47,7 @@
                         </div>
                         <div class="col-lg-4 form-group">
                             <label class="control-label" for="job_name">终端设备模板</label>
-                            <a class="btn btn-info" href="/download/终端设备模板.xlsx">点击下载</a>
+                            <a class="btn btn-info" href="/download/终端设备信息模板.xlsx">点击下载</a>
                         </div>
                         <div class="col-lg-4 form-group">
                             <label class="control-label" for="job_name">账单模板</label>
@@ -92,11 +92,11 @@
                     <form class="form-horizontal" role="form">
                         <div class="form-group">
                             <label for="infoTable"></label>
-                            <input type="text" class="form-control" id="infoTable">
+                            <input type="text" class="form-control" id="infoTable" placeholder="请输入信息表地址">
                         </div>
                         <div class="form-group">
                             <label for="billTable"></label>
-                            <input type="text" class="form-control" id="billTable">
+                            <input type="text" class="form-control" id="billTable" placeholder="请输入账单表地址">
                         </div>
                         <div class="form-group">
                             <button class="btn btn-success" type="button" id="financeSubmit">提交</button>
@@ -121,11 +121,11 @@
                     <form class="form-horizontal" role="form">
                         <div class="form-group">
                             <label for="infoTable"></label>
-                            <input type="text" class="form-control" id="ledgerInfoTable">
+                            <input type="text" class="form-control" id="ledgerInfoTable" placeholder="请输入信息表地址">
                         </div>
                         <div class="form-group">
                             <label for="billTable"></label>
-                            <input type="text" class="form-control" id="ledgerTable">
+                            <input type="text" class="form-control" id="ledgerTable" placeholder="请输入台账表地址">
                         </div>
                         <div class="form-group">
                             <button class="btn btn-success" type="button" id="ledgerSubmit">提交</button>
@@ -154,7 +154,7 @@
                 }
             },
             error: function () {
-                alert("网络错误！")
+                alert("发生了错误！请重试")
             }
         })
     });
@@ -172,7 +172,7 @@
                 }
             },
             error: function () {
-                alert("网络错误！")
+                alert("发生了错误！请重试")
             }
         })
     })
@@ -189,7 +189,7 @@
                 }
             },
             error: function () {
-                alert("网络错误！")
+                alert("发生了错误！请重试")
             }
         })
     })
