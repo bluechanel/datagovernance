@@ -4,6 +4,7 @@ import os
 
 from flask import Flask, render_template, jsonify, request, send_from_directory
 import pandas as pd
+import webbrowser
 
 app = Flask(__name__)
 
@@ -116,7 +117,12 @@ def mkdir(dirs: str):
         os.makedirs(dirs)
 
 
-if __name__ == '__main__':
+def main():
     logging.warning("请不要在使用该工具时关闭当前命令行窗口！")
     logging.warning("使用浏览器访问http://127.0.0.1:5000")
+    webbrowser.open_new_tab("http://127.0.0.1:5000")
     app.run()
+
+
+if __name__ == '__main__':
+    main()
