@@ -65,8 +65,8 @@ def finance(path1: str, path2: str) -> list[str]:
     :param path2:bill
     :return:
     """
-    result1_name = f"账单中不在系统的卡_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
-    result2_name = f"卡号一致明细表_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
+    result1_name = f"卡号一致明细表_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
+    result2_name = f"账单中不在系统的卡_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
     result3_name = f"系统中不在账单卡_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
     data1 = pd.read_excel(path1)
     data2 = pd.read_excel(path2)
