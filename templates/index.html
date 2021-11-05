@@ -5,227 +5,247 @@
     <title>数据治理</title>
     <link rel="icon" href="{{ url_for('static', filename='img/data.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/toast.min.css') }}" type="text/css">
     <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/toast.min.js') }}"></script>
 
 </head>
 <body>
-<div class="container">
-    <!-- Static navbar -->
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#home" data-toggle="tab">数据治理</a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="#clean" data-toggle="tab">数据清理</a></li>
-                    <li><a href="#finance" data-toggle="tab">信息&账单</a></li>
-                    <li><a href="#ledger" data-toggle="tab">信息&台账</a></li>
-                    <li><a href="#merge" data-toggle="tab">数据拼接</a></li>
-                    <li><a href="#diff" data-toggle="tab">费用对比</a></li>
-                </ul>
-            </div><!--/.nav-collapse -->
-        </div><!--/.container-fluid -->
-    </nav>
+<div class="container-fluid ">
+    <div class="row">
+        <div class="col-sm-8">
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <ul class="nav nav-pills" role="tablist">
+                        <li class="nav-item"><a class="nav-link" href="#clean" data-toggle="tab">数据治理模板</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#clean" data-toggle="tab">数据清理</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#finance" data-toggle="tab">信息&账单</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="#ledger" data-toggle="tab">信息&台账</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#merge" data-toggle="tab">数据拼接</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#diff" data-toggle="tab">费用对比</a></li>
+                    </ul>
+                </div>
+            </nav>
 
+            <div id="myTabContent" class="tab-content">
+                <!-- 首页 -->
+                <div class="container tab-pane active" id='home'>
+                    <div class="jumbotron" style="background-color: #ffffff">
+                        <div class="container">
+                            <h1>模板下载</h1>
+                            <p>后续功能使用的表格，严格按照此处下载的数据模板进行修改！</p>
+                        </div>
+                    </div>
+                    <div class="container tab-pane">
+                        <div class="col-sm-12">
+                            <form class="form-inline" role="form">
+                                <div class="col-lg-4 form-group">
+                                    <label class="control-label" for="job_name">卡台账模板</label>
+                                    <a class="btn btn-info" href="/download/卡台账模板.xlsx">点击下载</a>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <label class="control-label" for="job_name">终端设备模板</label>
+                                    <a class="btn btn-info" href="/download/终端设备信息模板.xlsx">点击下载</a>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <label class="control-label" for="job_name">账单模板</label>
+                                    <a class="btn btn-info" href="/download/账单模板.xlsx">点击下载</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
 
-    <div id="myTabContent" class="tab-content">
-        <!-- 首页 -->
-        <div class="tab-pane fade in active" id='home'>
-            <div class="jumbotron">
-                <div class="container">
-                    <h1>模板下载</h1>
-                    <p>后续功能使用的表格，严格按照此处下载的数据模板进行修改！</p>
+                <!-- 数据清洗 -->
+                <div class="container tab-pane fade" id='clean'>
+                    <div class="jumbotron" style="background-color: #ffffff">
+                        <div class="container">
+                            <h1>数据清洗</h1>
+                            <p>功能：将指定列重复的数据和有指定字段为空的数据和清洗完成后的数据导出</p>
+                            <p>输入：输入任意excel的文件所在地址</p>
+                            <p>输出：重复表（根据'去重列名'生成），空字段表（根据'去空列名'生成），清洗完成表</p>
+                            <p>注意点：对于多列名，请使用英文逗号隔开","， 清洗完成后的数据，对于重复数据，保留第一次出现的数据</p>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <div class="col-sm-12">
+                            <form class="form-horizontal" role="form">
+                                <div class="form-group">
+                                    <label for="infoTable">文件地址</label>
+                                    <input type="text" class="form-control" id="clean_path"
+                                           placeholder="请输入表地址">
+                                </div>
+                                <div class="form-group">
+                                    <label for="infoTable">去重列名</label>
+                                    <input type="text" class="form-control" id="dup_col" value="卡号">
+                                </div>
+                                <div class="form-group">
+                                    <label for="infoTable">去空列名</label>
+                                    <input type="text" class="form-control" id="na_col" value="IP,ICCID">
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-success" type="button" id="clean_submit">提交</button>
+                                </div>
+                                <div class="form-group" id="clean_result">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="container">
-                <div class="col-sm-12">
-                    <form class="form-inline" role="form">
-                        <div class="col-lg-4 form-group">
-                            <label class="control-label" for="job_name">卡台账模板</label>
-                            <a class="btn btn-info" href="/download/卡台账模板.xlsx">点击下载</a>
+                <!-- 信息&账单 -->
+                <div class="container tab-pane fade" id='finance'>
+                    <div class="jumbotron" style="background-color: #ffffff">
+                        <div class="container">
+                            <h1>信息&账单</h1>
+                            <p>功能：后台程序使用电话号码匹配，进行账单和信息表的计算</p>
+                            <p>输入：输入信息表和账单表excel地址</p>
+                            <p>输出：卡号一致明细表，账单中不在系统的卡数据，系统中不在账单卡数据</p>
+                            <p>注意点：对于输入的两个表如需数据清洗，请先到数据清洗模块完成后在使用该模块</p>
                         </div>
-                        <div class="col-lg-4 form-group">
-                            <label class="control-label" for="job_name">终端设备模板</label>
-                            <a class="btn btn-info" href="/download/终端设备信息模板.xlsx">点击下载</a>
+                    </div>
+                    <div class="container">
+                        <div class="col-sm-12">
+                            <form class="form-horizontal" role="form">
+                                <div class="form-group">
+                                    <label for="infoTable"></label>
+                                    <input type="text" class="form-control" id="infoTable" placeholder="请输入信息表地址">
+                                </div>
+                                <div class="form-group">
+                                    <label for="billTable"></label>
+                                    <input type="text" class="form-control" id="billTable" placeholder="请输入账单表地址">
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-success" type="button" id="financeSubmit">提交</button>
+                                </div>
+                                <div class="form-group" id="finance_result">
+                                </div>
+                            </form>
                         </div>
-                        <div class="col-lg-4 form-group">
-                            <label class="control-label" for="job_name">账单模板</label>
-                            <a class="btn btn-info" href="/download/账单模板.xlsx">点击下载</a>
-                        </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- 数据清洗 -->
-        <div class="tab-pane fade" id='clean'>
-            <div class="jumbotron">
-                <div class="container">
-                    <h1>数据清洗</h1>
-                    <p>功能：将指定列重复的数据和有指定字段为空的数据和清洗完成后的数据导出</p>
-                    <p>输入：输入任意excel的文件所在地址</p>
-                    <p>输出：重复表（根据'去重列名'生成），空字段表（根据'去空列名'生成），清洗完成表</p>
-                    <p>注意点：对于多列名，请使用英文逗号隔开","， 清洗完成后的数据，对于重复数据，保留第一次出现的数据</p>
+                <!-- 账单&台账 -->
+                <div class="container tab-pane fade" id="ledger">
+                    <div class="jumbotron" style="background-color: #ffffff">
+                        <div class="container">
+                            <h1>信息&台账</h1>
+                            <p>功能：后台程序使用ip地址匹配，进行账单和台账表的计算</p>
+                            <p>输入：输入信息表和台账表excel地址</p>
+                            <p>输出：信息台账差集表，台账信息差集表，台账信息交集拼接</p>
+                            <p>注意点：对于输入的两个表如需数据清洗，请先到数据清洗模块完成后在使用该模块</p>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <div class="col-sm-12">
+                            <form class="form-horizontal" role="form">
+                                <div class="form-group">
+                                    <label for="infoTable"></label>
+                                    <input type="text" class="form-control" id="ledgerInfoTable" placeholder="请输入信息表地址">
+                                </div>
+                                <div class="form-group">
+                                    <label for="billTable"></label>
+                                    <input type="text" class="form-control" id="ledgerTable" placeholder="请输入台账表地址">
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-success" type="button" id="ledgerSubmit">提交</button>
+                                </div>
+                                <div class="form-group" id="ledger_result">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="container">
-                <div class="col-sm-10">
-                    <form class="form-horizontal" role="form">
-                        <div class="form-group">
-                            <label for="infoTable">文件地址</label>
-                            <input type="text" class="form-control" id="clean_path"
-                                   placeholder="请输入表地址">
+                <!-- 数据拼接 -->
+                <div class="container tab-pane fade" id="merge">
+                    <div class="jumbotron" style="background-color: #ffffff">
+                        <div class="container">
+                            <h1>数据拼接</h1>
+                            <p>功能：后台程序使用指定字段匹配，进行两表的计算</p>
+                            <p>输入：两个excel表地址</p>
+                            <p>输出：表1表2差集表，表2表1差集表，表1表2交集拼接</p>
+                            <p>注意点：对于输入的两个表如需数据清洗，请先到数据清洗模块完成后在使用该模块</p>
                         </div>
-                        <div class="form-group">
-                            <label for="infoTable">去重列名</label>
-                            <input type="text" class="form-control" id="dup_col" value="卡号">
+                    </div>
+                    <div class="container">
+                        <div class="col-sm-12">
+                            <form class="form-horizontal" role="form">
+                                <div class="form-group">
+                                    <label for="table1"></label>
+                                    <input type="text" class="form-control" id="table1" placeholder="请输入表一地址">
+                                </div>
+                                <div class="form-group">
+                                    <label for="table2"></label>
+                                    <input type="text" class="form-control" id="table2" placeholder="请输入表二地址">
+                                </div>
+                                <div class="form-group">
+                                    <label for="col"></label>
+                                    <input type="text" class="form-control" id="col" value="卡号">
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-success" type="button" id="mergeSubmit">提交</button>
+                                </div>
+                                <div class="form-group" id="merge_status">
+                                </div>
+                                <div class="form-group" id="merge_result">
+                                </div>
+                            </form>
                         </div>
-                        <div class="form-group">
-                            <label for="infoTable">去空列名</label>
-                            <input type="text" class="form-control" id="na_col" value="IP,ICCID">
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-success" type="button" id="clean_submit">提交</button>
-                        </div>
-                        <div class="form-group" id="clean_result">
-                        </div>
-                    </form>
+                    </div>
                 </div>
+                <!-- 费用一致对比 -->
+                <div class="container tab-pane fade" id="diff">
+                    <div class="jumbotron" style="background-color: #ffffff">
+                        <div class="container">
+                            <h1>费用对比</h1>
+                            <p>功能：后台程序对相同卡号的数据的费用进行对比</p>
+                            <p>输入：两个账单表</p>
+                            <p>输出：一致表，不一致表</p>
+                            <p>注意点：该模块会对数据先进行去重后执行对比操作，对于重复数据保留第一次出现的数据</p>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <div class="col-sm-12">
+                            <form class="form-horizontal" role="form">
+                                <div class="form-group">
+                                    <label for="table1"></label>
+                                    <input type="text" class="form-control" id="billTable1" placeholder="请输入表一地址">
+                                </div>
+                                <div class="form-group">
+                                    <label for="table2"></label>
+                                    <input type="text" class="form-control" id="billTable2" placeholder="请输入表二地址">
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-success" type="button" id="billSubmit">提交</button>
+                                </div>
+                                <div class="form-group" id="diff_result">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- /container -->
+        </div>
+        <div class="col-sm-4">
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#home" data-toggle="tab">任务列表</a>
+                    </div>
+                </div><!--/.container-fluid -->
+            </nav>
+            <div class="list-group list-group-flush" id="task">
+{#                <a href="#" class="list-group-item list-group-item-action">#}
+{#                    <div class="d-flex w-100 justify-content-between">#}
+{#                        <h6 class="mb-1">List group item heading</h6>#}
+{#                        <label class="badge badge-success">成功</label>#}
+{#                    </div>#}
+{#                    <p class="mb-1">Some placeholder content in a paragraph.</p>#}
+{#                </a>#}
             </div>
         </div>
-        <!-- 信息&账单 -->
-        <div class="tab-pane fade" id='finance'>
-            <div class="jumbotron">
-                <div class="container">
-                    <h1>信息&账单</h1>
-                    <p>功能：后台程序使用电话号码匹配，进行账单和信息表的计算</p>
-                    <p>输入：输入信息表和账单表excel地址</p>
-                    <p>输出：卡号一致明细表，账单中不在系统的卡数据，系统中不在账单卡数据</p>
-                    <p>注意点：对于输入的两个表如需数据清洗，请先到数据清洗模块完成后在使用该模块</p>
-                </div>
-            </div>
-            <div class="container">
-                <div class="col-sm-10">
-                    <form class="form-horizontal" role="form">
-                        <div class="form-group">
-                            <label for="infoTable"></label>
-                            <input type="text" class="form-control" id="infoTable" placeholder="请输入信息表地址">
-                        </div>
-                        <div class="form-group">
-                            <label for="billTable"></label>
-                            <input type="text" class="form-control" id="billTable" placeholder="请输入账单表地址">
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-success" type="button" id="financeSubmit">提交</button>
-                        </div>
-                        <div class="form-group" id="finance_result">
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- 账单&台账 -->
-        <div class="tab-pane fade" id="ledger">
-            <div class="jumbotron">
-                <div class="container">
-                    <h1>信息&台账</h1>
-                    <p>功能：后台程序使用ip地址匹配，进行账单和台账表的计算</p>
-                    <p>输入：输入信息表和台账表excel地址</p>
-                    <p>输出：信息台账差集表，台账信息差集表，台账信息交集拼接</p>
-                    <p>注意点：对于输入的两个表如需数据清洗，请先到数据清洗模块完成后在使用该模块</p>
-                </div>
-            </div>
-            <div class="container">
-                <div class="col-sm-10">
-                    <form class="form-horizontal" role="form">
-                        <div class="form-group">
-                            <label for="infoTable"></label>
-                            <input type="text" class="form-control" id="ledgerInfoTable" placeholder="请输入信息表地址">
-                        </div>
-                        <div class="form-group">
-                            <label for="billTable"></label>
-                            <input type="text" class="form-control" id="ledgerTable" placeholder="请输入台账表地址">
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-success" type="button" id="ledgerSubmit">提交</button>
-                        </div>
-                        <div class="form-group" id="ledger_result">
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <!-- 数据拼接 -->
-        <div class="tab-pane fade" id="merge">
-            <div class="jumbotron">
-                <div class="container">
-                    <h1>数据拼接</h1>
-                    <p>功能：后台程序使用指定字段匹配，进行两表的计算</p>
-                    <p>输入：两个excel表地址</p>
-                    <p>输出：表1表2差集表，表2表1差集表，表1表2交集拼接</p>
-                    <p>注意点：对于输入的两个表如需数据清洗，请先到数据清洗模块完成后在使用该模块</p>
-                </div>
-            </div>
-            <div class="container">
-                <div class="col-sm-10">
-                    <form class="form-horizontal" role="form">
-                        <div class="form-group">
-                            <label for="table1"></label>
-                            <input type="text" class="form-control" id="table1" placeholder="请输入表一地址">
-                        </div>
-                        <div class="form-group">
-                            <label for="table2"></label>
-                            <input type="text" class="form-control" id="table2" placeholder="请输入表二地址">
-                        </div>
-                        <div class="form-group">
-                            <label for="col"></label>
-                            <input type="text" class="form-control" id="col" value="卡号">
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-success" type="button" id="mergeSubmit">提交</button>
-                        </div>
-                        <div class="form-group" id="merge_result">
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <!-- 费用一致对比 -->
-        <div class="tab-pane fade" id="diff">
-            <div class="jumbotron">
-                <div class="container">
-                    <h1>费用对比</h1>
-                    <p>功能：后台程序对相同卡号的数据的费用进行对比</p>
-                    <p>输入：两个账单表</p>
-                    <p>输出：一致表，不一致表</p>
-                    <p>注意点：该模块会对数据先进行去重后执行对比操作，对于重复数据保留第一次出现的数据</p>
-                </div>
-            </div>
-            <div class="container">
-                <div class="col-sm-10">
-                    <form class="form-horizontal" role="form">
-                        <div class="form-group">
-                            <label for="table1"></label>
-                            <input type="text" class="form-control" id="billTable1" placeholder="请输入表一地址">
-                        </div>
-                        <div class="form-group">
-                            <label for="table2"></label>
-                            <input type="text" class="form-control" id="billTable2" placeholder="请输入表二地址">
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-success" type="button" id="billSubmit">提交</button>
-                        </div>
-                        <div class="form-group" id="diff_result">
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-    </div> <!-- /container -->
+    </div>
 </div>
 <script>
 
@@ -241,15 +261,30 @@
             dataType: "json",
             contentType: "application/json; charset=UTF-8",
             success: function (arg) {
-                for (let i = 0; i < arg["filename"].length; i++) {
-                    let myDate = new Date();
-                    $('#clean_result').append("<p>" + myDate.toLocaleString() + "</p>");
-                    $('#clean_result').append("<p><a href='/download/" + arg['filename'][i] + "'>" + arg['filename'][i] + "</a></p>")
-                    $('#clean_result').append("<p>" + arg['msg'] + "</p>")
+                if (arg["status"] === 1){
+                    $.toast({
+                    title: '任务已提交!',
+                    type: 'info',
+                    delay: 3000,
+                    pause_on_hover: false
+                });
+                }else {
+                    $.toast({
+                    title: '任务提交失败!',
+                    type: 'danger',
+                    delay: 3000,
+                    pause_on_hover: false
+                });
                 }
+
             },
             error: function () {
-                alert("发生了错误！请重试")
+                $.toast({
+                    title: '任务提交失败!',
+                    type: 'danger',
+                    delay: 3000,
+                    pause_on_hover: false
+                });
             }
         })
     });
@@ -262,15 +297,30 @@
             dataType: "json",
             contentType: "application/json; charset=UTF-8",
             success: function (arg) {
-                for (let i = 0; i < arg["filename"].length; i++) {
-                    let myDate = new Date();
-                    $('#finance_result').append("<p>" + myDate.toLocaleString() + "</p>");
-                    $('#finance_result').append("<p><a href='/download/" + arg['filename'][i] + "'>" + arg['filename'][i] + "</a></p>")
-                    $('#finance_result').append("<p>" + arg['msg'] + "</p>")
+                if (arg["status"] === 1){
+                    $.toast({
+                    title: '任务已提交!',
+                    type: 'info',
+                    delay: 3000,
+                    pause_on_hover: false
+                });
+                }else {
+                    $.toast({
+                    title: '任务提交失败!',
+                    type: 'danger',
+                    delay: 3000,
+                    pause_on_hover: false
+                });
                 }
+
             },
             error: function () {
-                alert("发生了错误！请重试")
+                $.toast({
+                    title: '任务提交失败!',
+                    type: 'danger',
+                    delay: 3000,
+                    pause_on_hover: false
+                });
             }
         })
     })
@@ -282,15 +332,30 @@
             dataType: "json",
             contentType: "application/json; charset=UTF-8",
             success: function (arg) {
-                for (let i = 0; i < arg["filename"].length; i++) {
-                    let myDate = new Date();
-                    $('#ledger_result').append("<p>" + myDate.toLocaleString() + "</p>");
-                    $('#ledger_result').append("<p><a href='/download/" + arg['filename'][i] + "'>" + arg['filename'][i] + "</a></p>")
-                    $('#ledger_result').append("<p>" + arg['msg'] + "</p>")
+                if (arg["status"] === 1){
+                    $.toast({
+                    title: '任务已提交!',
+                    type: 'info',
+                    delay: 3000,
+                    pause_on_hover: false
+                });
+                }else {
+                    $.toast({
+                    title: '任务提交失败!',
+                    type: 'danger',
+                    delay: 3000,
+                    pause_on_hover: false
+                });
                 }
+
             },
             error: function () {
-                alert("发生了错误！请重试")
+                $.toast({
+                    title: '任务提交失败!',
+                    type: 'danger',
+                    delay: 3000,
+                    pause_on_hover: false
+                });
             }
         })
     })
@@ -307,15 +372,30 @@
             dataType: "json",
             contentType: "application/json; charset=UTF-8",
             success: function (arg) {
-                for (let i = 0; i < arg["filename"].length; i++) {
-                    let myDate = new Date();
-                    $('#merge_result').append("<p>" + myDate.toLocaleString() + "</p>");
-                    $('#merge_result').append("<p><a href='/download/" + arg['filename'][i] + "'>" + arg['filename'][i] + "</a></p>")
-                    $('#merge_result').append("<p>" + arg['msg'] + "</p>")
+                if (arg["status"] === 1){
+                    $.toast({
+                    title: '任务已提交!',
+                    type: 'info',
+                    delay: 3000,
+                    pause_on_hover: false
+                });
+                }else {
+                    $.toast({
+                    title: '任务提交失败!',
+                    type: 'danger',
+                    delay: 3000,
+                    pause_on_hover: false
+                });
                 }
+
             },
             error: function () {
-                alert("发生了错误！请重试")
+                $.toast({
+                    title: '任务提交失败!',
+                    type: 'danger',
+                    delay: 3000,
+                    pause_on_hover: false
+                });
             }
         })
     })
@@ -331,18 +411,77 @@
             dataType: "json",
             contentType: "application/json; charset=UTF-8",
             success: function (arg) {
-                for (let i = 0; i < arg["filename"].length; i++) {
-                    let myDate = new Date();
-                    $('#diff_result').append("<p>" + myDate.toLocaleString() + "</p>");
-                    $('#diff_result').append("<p><a href='/download/" + arg['filename'][i] + "'>" + arg['filename'][i] + "</a></p>")
-                    $('#diff_result').append("<p>" + arg['msg'] + "</p>")
+                if (arg["status"] === 1){
+                    $.toast({
+                    title: '任务已提交!',
+                    type: 'info',
+                    delay: 3000,
+                    pause_on_hover: false
+                });
+                }else {
+                    $.toast({
+                    title: '任务提交失败!',
+                    type: 'danger',
+                    delay: 3000,
+                    pause_on_hover: false
+                });
                 }
+
             },
             error: function () {
-                alert("发生了错误！请重试")
+                $.toast({
+                    title: '任务提交失败!',
+                    type: 'danger',
+                    delay: 3000,
+                    pause_on_hover: false
+                });
             }
         })
     })
+
+    function rotation_merge() {
+        $.ajax({
+            url: "/get_data",
+            type: "get",
+            dataType: "json",
+            contentType: "application/json; charset=UTF-8",
+            success: function (arg) {
+                $('#task').empty()
+                let data = arg["data"]
+                console.log(data.length)
+                for (let i = 0; i < data.length; i++) {
+                    console.log(data[i])
+                    if (data[i]["status"] === 'stop') {
+                        $('#task').append(`<a href="/download/${data[i]['filename']}" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">${data[i]['filename']}</h6>
+                        <label class="badge badge-success">success</label>
+                    </div>
+                    <small>${data[i]['msg']}</small>
+                </a>`);
+                    } else {
+                        $('#task').append(`<a class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">${data[i]['filename']}</h6>
+                        <label class="badge badge-primary">running</label>
+                    </div>
+                    <small>${data[i]['msg']}</small>
+                </a>`);
+                    }
+                }
+            },
+            error: function () {
+                $.toast({
+                    title: '任务状态获取失败!',
+                    type: 'danger',
+                    delay: 3000,
+                    pause_on_hover: false
+                });
+            }
+        })
+    }
+
+    setInterval(rotation_merge, 5000)
 
 </script>
 </body>

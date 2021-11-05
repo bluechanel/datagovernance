@@ -1,13 +1,17 @@
 import datetime
 import logging
 import os
-from typing import Union, Any
-
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from flask import Flask, render_template, jsonify, request, send_from_directory
 import pandas as pd
 import webbrowser
 
 app = Flask(__name__)
+executor = ThreadPoolExecutor()
+
+task_list = []
+lock = threading.Lock()
 
 
 def judge(col1, col2):
@@ -28,15 +32,15 @@ def allowed_file(file_name: str):
     return '.' in file_name and file_name.rsplit('.', 1)[1] in ['xlsx', 'xls']
 
 
-def clean(path: str, dup_col: list[str], na_col: list[str]) -> Any:
+def clean(path: str, dup_col: list[str], na_col: list[str], result_name: str):
     """
     数据清洗函数
+    :param result_name:
     :param na_col:
     :param dup_col:
     :param path:
     :return:
     """
-    result_name = f"数据清洗_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
     writer = pd.ExcelWriter(f'data/{result_name}')
 
     # result1_name = f"重复_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
@@ -77,17 +81,24 @@ def clean(path: str, dup_col: list[str], na_col: list[str]) -> Any:
         msg += f"清洗后数据为：{len(result3_data)}条；"
     writer.save()
     writer.close()
-    return {"filename": [result_name], "msg": msg}
+    lock.acquire()
+    try:
+        for i in task_list:
+            if i["filename"] == result_name:
+                i["msg"] = msg
+                i["status"] = "stop"
+    finally:
+        lock.release()
 
 
-def finance(path1: str, path2: str) -> dict[str, Union[list[str], str]]:
+def finance(path1: str, path2: str, result_name: str):
     """
     信息账单表合并函数
+    :param result_name:
     :param path1:info
     :param path2:bill
     :return:
     """
-    result_name = f"信息账单表_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
     writer = pd.ExcelWriter(f'data/{result_name}')
 
     # result1_name = f"卡号一致明细表_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
@@ -112,12 +123,20 @@ def finance(path1: str, path2: str) -> dict[str, Union[list[str], str]]:
     msg += f"系统中不在账单卡数据为：{len(result3_data)}条；"
     writer.save()
     writer.close()
-    return {"filename": [result_name], "msg": msg}
+    lock.acquire()
+    try:
+        for i in task_list:
+            if i["filename"] == result_name:
+                i["msg"] = msg
+                i["status"] = "stop"
+    finally:
+        lock.release()
 
 
-def ledger(path1: str, path2: str, col: str) -> dict[str, Union[list[str], str]]:
+def ledger(path1: str, path2: str, col: str, result_name: str):
     """
     信息台账表合并函数
+    :param result_name:
     :param col:
     :param path1: info
     :param path2: ledger
@@ -126,7 +145,6 @@ def ledger(path1: str, path2: str, col: str) -> dict[str, Union[list[str], str]]
     data1 = pd.read_excel(path1)
     data2 = pd.read_excel(path2)
     if col == "IP":
-        result_name = f"信息台账_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
         name1 = "信息台账差集表"
         name2 = "台账信息差集表"
         name3 = "台账信息交集拼接"
@@ -135,16 +153,6 @@ def ledger(path1: str, path2: str, col: str) -> dict[str, Union[list[str], str]]
         # result1_name = f"信息台账差集表_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
         # result2_name = f"台账信息差集表_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
         # result3_name = f"台账信息交集拼接_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
-    else:
-        result_name = f"合并表表_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
-        name1 = "表1表2差集表"
-        name2 = "表2表1差集表"
-        name3 = "表1表2交集拼接"
-        msg = f"表一原始数据为：{len(data1)}条；"
-        msg += f"表二原始数据为：{len(data2)}条；"
-        # result1_name = f"表1表2差集表_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
-        # result2_name = f"表2表1差集表_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
-        # result3_name = f"表1表2交集拼接_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
     writer = pd.ExcelWriter(f'data/{result_name}')
     # 交集
     result1_data = pd.merge(data1, data2, how='outer', on=col, indicator=True).query('_merge == "left_only"').drop(
@@ -161,11 +169,17 @@ def ledger(path1: str, path2: str, col: str) -> dict[str, Union[list[str], str]]
     msg += f"{name3}数据为：{len(result3_data)}条；"
     writer.save()
     writer.close()
-    return {"filename": [result_name], "msg": msg}
+    lock.acquire()
+    try:
+        for i in task_list:
+            if i["filename"] == result_name:
+                i["msg"] = msg
+                i["status"] = "stop"
+    finally:
+        lock.release()
 
 
-def diff(path1: str, path2: str) -> dict[str, Union[list[str], str]]:
-    result_name = f"费用比较表_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
+def diff(path1: str, path2: str, result_name: str):
     writer = pd.ExcelWriter(f'data/{result_name}')
     # result1_name = f"费用一致表_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
     # result2_name = f"费用不一致表_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
@@ -196,45 +210,117 @@ def diff(path1: str, path2: str) -> dict[str, Union[list[str], str]]:
     msg += f"不一致数据为：{len(result2_data)}条；"
     writer.save()
     writer.close()
+    lock.acquire()
+    try:
+        for i in task_list:
+            if i["filename"] == result_name:
+                i["msg"] = msg
+                i["status"] = "stop"
+    finally:
+        lock.release()
 
-    return {"filename": [result_name], "msg": msg}
+
+
+def merge(path1: str, path2: str, col: str, result_name: str):
+    data1 = pd.read_excel(path1)
+    data2 = pd.read_excel(path2)
+    name1 = "表1表2差集表"
+    name2 = "表2表1差集表"
+    name3 = "表1表2交集拼接"
+    msg = f"表一原始数据为：{len(data1)}条；"
+    msg += f"表二原始数据为：{len(data2)}条；"
+    writer = pd.ExcelWriter(f'data/{result_name}')
+    # 交集
+    result1_data = pd.merge(data1, data2, how='outer', on=col, indicator=True).query('_merge == "left_only"').drop(
+        columns=['_merge'])
+    # 差集
+    result2_data = pd.merge(data2, data1, how='outer', on=col, indicator=True).query('_merge == "left_only"').drop(
+        columns=['_merge'])
+    result3_data = pd.merge(data1, data2, how='inner', on=col)
+    result1_data.to_excel(writer, sheet_name=name1)
+    msg += f"{name1}数据为：{len(result1_data)}条；"
+    result2_data.to_excel(writer, sheet_name=name2)
+    msg += f"{name2}数据为：{len(result2_data)}条；"
+    result3_data.to_excel(writer, sheet_name=name3)
+    msg += f"{name3}数据为：{len(result3_data)}条；"
+    writer.save()
+    writer.close()
+    lock.acquire()
+    try:
+        for i in task_list:
+            if i["filename"] == result_name:
+                i["msg"] = msg
+                i["status"] = "stop"
+    finally:
+        lock.release()
 
 
 @app.post('/data_clean')
 def clean_route():
     r = request.get_json()
-    dup_col = r["dup_col"].split(",")
-    na_col = r["na_col"].split(",")
-    result = clean(r["path"], dup_col, na_col)
-    return jsonify(result)
+    try:
+        dup_col = r["dup_col"].split(",")
+        na_col = r["na_col"].split(",")
+        result_name = f"数据清洗_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
+        executor.submit(clean, r["path"], dup_col, na_col, result_name)
+    except Exception as e:
+        return jsonify({"status": 0})
+    return jsonify({"status": 1})
 
 
 @app.post('/finance')
 def finance_route():
     r = request.get_json()
-    result = finance(r["path1"], r["path2"])
-    return jsonify(result)
+    try:
+        result_name = f"信息账单表_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
+        executor.submit(finance, r["path1"], r["path2"], result_name)
+    except Exception as e:
+        return jsonify({"status": 0})
+    return jsonify({"status": 1})
 
 
 @app.post('/ledger')
 def ledger_route():
     r = request.get_json()
-    result = ledger(r["path1"], r["path2"], "IP")
-    return jsonify(result)
+    try:
+        result_name = f"信息台账_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
+        executor.submit(ledger, r["path1"], r["path2"], "IP", result_name)
+    except Exception as e:
+        return jsonify({"status": 0})
+    return jsonify({"status": 1})
 
 
 @app.post('/merge')
 def merge_route():
     r = request.get_json()
-    result = ledger(r["path1"], r["path2"], r["col"])
-    return jsonify(result)
+    result_name = f"合并表_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
+    try:
+        task_list.append({"filename": result_name, "msg": "", 'status': 'running'})
+        executor.submit(merge, r["path1"], r["path2"], r["col"], result_name)
+    except Exception as e:
+        return jsonify({"status": 0})
+    return jsonify({"status": 1})
 
 
 @app.post('/diff')
 def diff_route():
     r = request.get_json()
-    result = diff(r["path1"], r["path2"])
-    return jsonify(result)
+    try:
+        result_name = f"费用比较表_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
+        executor.submit(diff, r["path1"], r["path2"], result_name)
+    except Exception as e:
+        return jsonify({"status": 0})
+    return jsonify({"status": 1})
+
+
+@app.get('/get_data')
+def rotation_route():
+    """
+    轮询文件名，获取文件 获取msg
+    :return:
+    """
+    # 判断目录下是否有该文件
+    return jsonify({"data": task_list})
 
 
 def mkdir(dirs: str):
