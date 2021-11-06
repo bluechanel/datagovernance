@@ -23,6 +23,11 @@ def hello_world():
     return render_template('index.html')
 
 
+@app.route('/version')
+def version():
+    return jsonify({"author": "Wiley", "version": "v1.0.1"})
+
+
 @app.route('/download/<filename>')
 def download_file(filename):
     return send_from_directory('data', filename)
@@ -218,7 +223,6 @@ def diff(path1: str, path2: str, result_name: str):
                 i["status"] = "stop"
     finally:
         lock.release()
-
 
 
 def merge(path1: str, path2: str, col: str, result_name: str):
