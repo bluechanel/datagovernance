@@ -25,7 +25,7 @@ def hello_world():
 
 @app.route('/version')
 def version():
-    return jsonify({"author": "Wiley", "version": "v1.0.1"})
+    return jsonify({"author": "Wiley", "version": "v2.0.1"})
 
 
 @app.route('/download/<filename>')
@@ -237,10 +237,13 @@ def merge(path1: str, path2: str, col: str, result_name: str):
     # 交集
     result1_data = pd.merge(data1, data2, how='outer', on=col, indicator=True).query('_merge == "left_only"').drop(
         columns=['_merge'])
+    print("交集计算完成！")
     # 差集
     result2_data = pd.merge(data2, data1, how='outer', on=col, indicator=True).query('_merge == "left_only"').drop(
         columns=['_merge'])
+    print("差集计算完成！")
     result3_data = pd.merge(data1, data2, how='inner', on=col)
+    print("合并完成！")
     result1_data.to_excel(writer, sheet_name=name1)
     msg += f"{name1}数据为：{len(result1_data)}条；"
     result2_data.to_excel(writer, sheet_name=name2)
