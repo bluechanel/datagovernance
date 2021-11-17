@@ -23,9 +23,16 @@ def hello_world():
     return render_template('index.html')
 
 
-@app.route('/version')
+@app.route('/readme')
 def version():
-    return jsonify({"author": "Wiley", "version": "v2.0.1"})
+    with open('README.md', 'r') as f:
+        readme = f.read()
+    return readme.replace("\n", "<br/>")
+
+
+@app.route('/upload')
+def upload_file():
+    pass
 
 
 @app.route('/download/<filename>')
